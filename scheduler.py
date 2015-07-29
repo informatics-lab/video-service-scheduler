@@ -10,7 +10,7 @@ import analysis_config as config
 class ImgJob(object):
     def __init__(self, message):
         self.data_file = message["data_file"]
-        self.profile = message["profile"]
+        self.profile_name = message["profile_name"]
         self.model = message["model"]
         self.variable = message["variable"]
         self.id = self.data_file + "_" + self.profile_name
@@ -81,10 +81,10 @@ if __name__ == "__main__":
 
     if full_set:
         frame = full_set[0]
-        print "Picked up " + frame.data_file + " " + frame.profile
+        print "Picked up " + frame.data_file + " " + frame.profile_name
         deleteJobs(image_ready_queuem, full_set)
         postVideoServiceJob(video_service_queue, {"model": frame.model,
                                                   "variable": frame.variable,
-                                                  "profile": frame.profile})
+                                                  "profile_name": frame.profile_name})
 
     sys.exit()
