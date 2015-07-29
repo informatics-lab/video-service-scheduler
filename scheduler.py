@@ -3,8 +3,8 @@
 import boto
 
 import sys
-sys.path.append(".")
-import config
+sys.path.append("./config")
+import analysis_config as config
 
 
 class ImgJob(object):
