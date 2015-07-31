@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import boto
+import boto.sqs
+import os
 
 import sys
 sys.path.append("./config")
@@ -34,7 +36,13 @@ class NoJobsError(Exception):
 
 
 def getReadyImages(queue, visibility_timeout=60):
-    messages = queue.get_messages(visibility_timeout, number_messages=999999999) #get all messages
+    messages=[]
+    some_messages = queue.get_messages(10, visibility_timeout=visibility_timeout)
+    # loop until all messages are got, can only get max 10 at a time
+    while len(some_messages) > 0:
+        messages.extend(some_messages)
+        some_messages = queue.get_messages(10, visibility_timeout=visibility_timeout)
+
     try:
         jobs = [ImgJob(message) for message in messages]
     except IndexError:
@@ -86,5 +94,7 @@ if __name__ == "__main__":
         postVideoServiceJob(video_service_queue, {"model": frame.model,
                                                   "variable": frame.variable,
                                                   "profile_name": frame.profile_name})
+    else:
+        raise NoJobsError()
 
     sys.exit()
